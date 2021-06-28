@@ -1,10 +1,10 @@
-IntAssoPlot: Visualize Genome-Wide Association Study with Gene Annotation and Linkage Disequiblism
+VisProDom: a shiny application to display protein domain accrose transcript features and genomes
 ====
 
 ![GPLv3](http://www.gnu.org/graphics/gplv3-88x31.png)
 [GNU General Public License, GPLv3](http://www.gnu.org/copyleft/gpl.html)
 
-![Availability](https://github.com/whweve/IntAssoPlot)
+![Availability](https://github.com/whweve/VisProDom)
 
 # Installation
 ## install compiler
@@ -19,21 +19,17 @@ The `install_github()`, in the R package remotes, requires that you build from s
 install.packages(c("devtools","remotes"))
 ```
 
-## install depended packages, including ggplot2, SNPRelate, ggrepel, gdsfmt and reshape2
+## install depended packages, including ggplot2, shinydashboard, shiny, ggplot2, rintrojs, dplyr, data.table, ggrepel
 ```R
 #ggplot2, ggrepel, and reshape2 are installed from CRAN
-install.packages(c("ggplot2","ggrepel","reshape2"))
-#SNPRelate and gdsfmt are installed from Bioconductor
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install(c("SNPRelate","gdsfmt"))
+install.packages(c("ggplot2", "shinydashboard", "shiny", "ggplot2", "rintrojs", "dplyr", "data.table", "ggrepel"))
 ```
 ## install VisProDom from GitHub:
 ```R
 library(remotes) # version 2.1.0
-#download, build, and install IntAssoPlot without creating vignette
+#download, build, and install VisProDom without creating vignette
 install_github("whweve/VisProDom")
-#download, build, and install IntAssoPlot with creating vignette
+#download, build, and install VisProDom with creating vignette
 install_github("whweve/VisProDom",build=TRUE,build_vignettes = TRUE)
 ```
 
@@ -44,4 +40,3 @@ library(VisProDom)
 # initiate VisProDom shiny appp
 runVPDapp()
 ```
-
