@@ -1,5 +1,5 @@
 Package: VisProDom
-Title: plot gene structure and protein domain for given gene across species
+Title: VisProDom: an interactive Shiny/R application to display protein domains with transcriptional features
 Version: 1.0
 Authors@R: c(person("Hongwei", "Wang", role=c("aut", "cre", "cph"), email="whweve@163.com"))
 Description: VisProDom, a shiny application to display protein domain accrose transcript features and genomes.
