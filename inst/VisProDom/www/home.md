@@ -1,4 +1,4 @@
-VisProDom: a shiny application to display protein domain accrose transcript features and genomes
+VisProDom: an interactive Shiny/R application to display protein domains with transcriptional features
 ====
 
 ![GPLv3](http://www.gnu.org/graphics/gplv3-88x31.png)
