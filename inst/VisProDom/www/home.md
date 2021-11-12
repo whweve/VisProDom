@@ -22,7 +22,7 @@ install.packages(c("devtools","remotes"))
 ## install depended packages, including ggplot2, shinydashboard, shiny, ggplot2, rintrojs, dplyr, data.table, ggrepel
 ```R
 #ggplot2, ggrepel, and reshape2 are installed from CRAN
-install.packages(c("ggplot2", "shinydashboard", "shiny", "ggplot2", "rintrojs", "dplyr", "data.table", "ggrepel"))
+install.packages(c("ggplot2", "shinydashboard", "shiny", "ggplot2", "rintrojs", "dplyr", "data.table", "ggrepel","markdown"))
 ```
 ## install VisProDom from GitHub:
 ```R
