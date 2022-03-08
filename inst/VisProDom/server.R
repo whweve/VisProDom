@@ -435,10 +435,12 @@ server <- function(input, output,session) {
   })
   maxsymbollength <- eventReactive(!is.null(output_image_data()) & dim(output_image_data())[1] >= 1,{
     trans <- output_image_data()
-    if(!is.null(trans) & dim(trans)[1] >= 1) {
+   if(!is.null(trans) ) { 
+     if(dim(trans)[1] >= 1) {
       maxsymbollength <- max(trans$pos)
       return(maxsymbollength)
-    }
+  }
+}
   })
   genicmaximum <- eventReactive(!is.null(output_image_data()) & dim(output_image_data())[1] >= 1,{
     trans <- output_image_data()
