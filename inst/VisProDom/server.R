@@ -2,16 +2,74 @@
 #' @description  plot gene structure and protein domain for given gene across genomes
 #' @author Hongwei Wang <\email{whweve@163.com}>
 #' @export
-#' @import shinydashboard shiny ggplot2 rintrojs dplyr data.table fuzzyjoin 
+#' @import  shiny ggplot2 rintrojs dplyr data.table fuzzyjoin fresh shinyBS
 library(shiny)
-library(shinydashboard)
 library(ggplot2)
 library(rintrojs)
 library(dplyr)
 library(data.table)
 library(markdown)
-options(shiny.maxRequestSize=1000*1024^2,shiny.usecairo=TRUE,res=300)
+library(fresh)
+library(shinyBS)
+#options(shiny.maxRequestSize=1000*1024^2,shiny.usecairo=TRUE,res=300)
+options(shiny.usecairo=TRUE,res=300)
 server <- function(input, output,session) {
+  
+  #observeEvent(input.tabvals == 1, {
+  #      shinyjs::addClass(selector = "body", class = "sidebar-collapse")
+  #    })
+  #observe(print(input$navbar))
+  observe({
+      if(input$navbar == "stop1") {
+        stopApp()
+      }
+    })
+    
+  observe({
+      if(input$navbar == "refresh1") {
+        #stopApp()
+		#VisProDom::runVPDapp()
+		#stopApp()
+		#restartApp()
+		session$reload()
+      }
+    })
+	
+  observeEvent("", {
+    showModal(modalDialog(
+      includeHTML("www/intro_text.html"),
+      easyClose = TRUE,
+      footer = tagList(
+        #style="text-align: center",
+		div(style = "margin-right:33.1%;colour:green",
+        actionButton(inputId = "intro", label = "INTRODUCTION TOUR", icon = icon("info-circle"),class = "danger")
+		)
+      )
+    ))
+  })
+  
+  observeEvent(input$intro,{
+    removeModal()
+  })
+  
+  # show intro tour
+  observeEvent(input$intro,
+               introjs(session, options = list("nextLabel" = "Continue",
+                                               "prevLabel" = "Previous",
+                                               "doneLabel" = "Alright. Let's go"))
+  )
+  
+  observeEvent(input$submit1, {
+  div(class="well","background-color:green",
+    updateButton(
+      session, 
+      inputId = "submit1", 
+      label = "Update VisProDom", 
+      icon = icon("circle-check"), 
+      style = "background-color:red")
+	  )
+  })
+  
   output$setgffnumber <- renderUI({
     if(input$datasource=="readgffcheck") {
       list(numericInput("gffnumber","inputted gff number",1))
@@ -49,87 +107,87 @@ server <- function(input, output,session) {
       selectInput("spevariable", "Genome:",
                   c(
                     "Aquilegia_coerulea_v3.1"="Aquilegia_coerulea_v3.1",
-"Ananas_comosus_v3"="Ananas_comosus_v3",
-"Arabidopsis_halleri_v1.1"="Arabidopsis_halleri_v1.1",
-"Amaranthus_hypochondriacus_v1.0"="Amaranthus_hypochondriacus_v1.0",
-"Amaranthus_hypochondriacus_v2.1"="Amaranthus_hypochondriacus_v2.1",
-"Arabidopsis_lyrata_v2.1"="Arabidopsis_lyrata_v2.1",
-"Anacardium_occidentale_v0.9"="Anacardium_occidentale_v0.9",
-"Asparagus_officinalis_V1.1"="Asparagus_officinalis_V1.1",
-"Arabidopsis_thaliana_Araport11.447"="Arabidopsis_thaliana_Araport11.447",
-"Amborella_trichopoda_v1.0"="Amborella_trichopoda_v1.0",
-"Botryococcus_braunii_v2.1"="Botryococcus_braunii_v2.1",
-"Brachypodium_distachyon_v3.1"="Brachypodium_distachyon_v3.1",
-"Brachypodium_distachyon_Bd21_3_v1.1"="Brachypodium_distachyon_Bd21_3_v1.1",
-"Brachypodium_hybridum_v1.1"="Brachypodium_hybridum_v1.1",
-"Brassica_oleracea_capitata_v1.0"="Brassica_oleracea_capitata_v1.0",
-"Brassica_rapa_FPsc_v1.3"="Brassica_rapa_FPsc_v1.3",
-"Brachypodium_stacei_v0.1"="Brachypodium_stacei_v0.1",
-"Boechera_stricta_v1.2"="Boechera_stricta_v1.2",
-"Brachypodium_sylvaticum_v1.1"="Brachypodium_sylvaticum_v1.1",
-"Cicer_arietinum_v1.0"="Cicer_arietinum_v1.0",
-"Citrus_clementina_v1.0"="Citrus_clementina_v1.0",
-"Capsella_grandiflora_v1.1"="Capsella_grandiflora_v1.1",
-"Chenopodium_quinoa_v1.0"="Chenopodium_quinoa_v1.0",
-"Chlamydomonas_reinhardtii_v5.5"="Chlamydomonas_reinhardtii_v5.5",
-"Capsella_rubella_v1.0"="Capsella_rubella_v1.0",
-"Cucumis_sativus_v1"="Cucumis_sativus_v1",
-"Chromochloris_zofingiensis_v5.2.3"="Chromochloris_zofingiensis_v5.2.3",
-"Daucus_carota_v1.0"="Daucus_carota_v1.0",
-"Dunaliella_salina_v1.0"="Dunaliella_salina_v1.0",
-"Eutrema_salsugineum_v1.0"="Eutrema_salsugineum_v1.0",
-"Fragaria_vesca_v1.1"="Fragaria_vesca_v1.1",
-"Gossypium_hirsutum_v1.1"="Gossypium_hirsutum_v1.1",
-"Glycine_max_Wm82.a2.v1"="Glycine_max_Wm82.a2.v1",
-"Gossypium_raimondii_v2.1"="Gossypium_raimondii_v2.1",
-"Helianthus_annuus_r1.2"="Helianthus_annuus_r1.2",
-"Hordeum_vulgare_r1"="Hordeum_vulgare_r1",
-"Kalanchoe_fedtschenkoi_v1.1"="Kalanchoe_fedtschenkoi_v1.1",
-"Kalanchoe_laxiflora_v1.1"="Kalanchoe_laxiflora_v1.1",
-"Lactuca_sativa_v5"="Lactuca_sativa_v5",
-"Linum_usitatissimum_v1.0"="Linum_usitatissimum_v1.0",
-"Musa_acuminata_v1"="Musa_acuminata_v1",
-"Malus_domestica_v1.0"="Malus_domestica_v1.0",
-"Manihot_esculenta_v6.1"="Manihot_esculenta_v6.1",
-"Mimulus_guttatus_v2.0"="Mimulus_guttatus_v2.0",
-"Marchantia_polymorpha_v3.1"="Marchantia_polymorpha_v3.1",
-"Micromonas_pusilla_CCMP1545_v3.0"="Micromonas_pusilla_CCMP1545_v3.0",
-"Miscanthus_sinensis_v7.1"="Miscanthus_sinensis_v7.1",
-"Micromonas_sp._RCC299_v3.0"="Micromonas_sp._RCC299_v3.0",
-"Medicago_truncatula_Mt4.0v1"="Medicago_truncatula_Mt4.0v1",
-"Ostreococcus_lucimarinus_v2.0"="Ostreococcus_lucimarinus_v2.0",
-"Oryza_sativa_v7.0"="Oryza_sativa_v7.0",
-"Oryza_sativa_Kitaake_v3.1"="Oryza_sativa_Kitaake_v3.1",
-"Oropetium_thomaeum_v1.0"="Oropetium_thomaeum_v1.0",
-"Populus_deltoides_WV94_v2.1"="Populus_deltoides_WV94_v2.1",
-"Panicum_hallii_v3.1"="Panicum_hallii_v3.1",
-"Prunus_persica_v2.1"="Prunus_persica_v2.1",
-"Populus_trichocarpa_v3.0"="Populus_trichocarpa_v3.0",
-"Populus_trichocarpa_v3.1"="Populus_trichocarpa_v3.1",
-"Porphyra_umbilicalis_v1.5"="Porphyra_umbilicalis_v1.5",
-"Panicum_virgatum_v1.1"="Panicum_virgatum_v1.1",
-"Phaseolus_vulgaris_v2.1"="Phaseolus_vulgaris_v2.1",
-"Ricinus_communis_v0.1"="Ricinus_communis_v0.1",
-"Sorghum_bicolor_v3.1"="Sorghum_bicolor_v3.1",
-"Sorghum_bicolor_v3.2"="Sorghum_bicolor_v3.2",
-"Sorghum_bicolor_Rio_v2.1"="Sorghum_bicolor_Rio_v2.1",
-"Sphagnum_fallax_v0.5"="Sphagnum_fallax_v0.5",
-"Setaria_italica_v2.2"="Setaria_italica_v2.2",
-"Solanum_lycopersicum_ITAG2.4"="Solanum_lycopersicum_ITAG2.4",
-"Selaginella_moellendorffii_v1.0"="Selaginella_moellendorffii_v1.0",
-"Spirodela_polyrhiza_v2"="Spirodela_polyrhiza_v2",
-"Salix_purpurea_v1.0"="Salix_purpurea_v1.0",
-"Solanum_tuberosum_v4.03"="Solanum_tuberosum_v4.03",
-"Setaria_viridis_v1.1"="Setaria_viridis_v1.1",
-"Setaria_viridis_v2.1"="Setaria_viridis_v2.1",
-"Triticum_aestivum_v2.2"="Triticum_aestivum_v2.2",
-"Theobroma_cacao_v1.1"="Theobroma_cacao_v1.1",
-"Trifolium_pratense_v2"="Trifolium_pratense_v2",
-"Volvox_carteri_v2.1"="Volvox_carteri_v2.1",
-"Vitis_vinifera_Genoscope.12X"="Vitis_vinifera_Genoscope.12X",
-"Zostera_marina_v2.2"="Zostera_marina_v2.2",
-"Zea_mays_B73_V3"="Zea_mays_B73_V3",
-"Zea_mays_PH207_v1.1"="Zea_mays_PH207_v1.1"
+                    "Ananas_comosus_v3"="Ananas_comosus_v3",
+                    "Arabidopsis_halleri_v1.1"="Arabidopsis_halleri_v1.1",
+                    "Amaranthus_hypochondriacus_v1.0"="Amaranthus_hypochondriacus_v1.0",
+                    "Amaranthus_hypochondriacus_v2.1"="Amaranthus_hypochondriacus_v2.1",
+                    "Arabidopsis_lyrata_v2.1"="Arabidopsis_lyrata_v2.1",
+                    "Anacardium_occidentale_v0.9"="Anacardium_occidentale_v0.9",
+                    "Asparagus_officinalis_V1.1"="Asparagus_officinalis_V1.1",
+                    "Arabidopsis_thaliana_Araport11.447"="Arabidopsis_thaliana_Araport11.447",
+                    "Amborella_trichopoda_v1.0"="Amborella_trichopoda_v1.0",
+                    "Botryococcus_braunii_v2.1"="Botryococcus_braunii_v2.1",
+                    "Brachypodium_distachyon_v3.1"="Brachypodium_distachyon_v3.1",
+                    "Brachypodium_distachyon_Bd21_3_v1.1"="Brachypodium_distachyon_Bd21_3_v1.1",
+                    "Brachypodium_hybridum_v1.1"="Brachypodium_hybridum_v1.1",
+                    "Brassica_oleracea_capitata_v1.0"="Brassica_oleracea_capitata_v1.0",
+                    "Brassica_rapa_FPsc_v1.3"="Brassica_rapa_FPsc_v1.3",
+                    "Brachypodium_stacei_v0.1"="Brachypodium_stacei_v0.1",
+                    "Boechera_stricta_v1.2"="Boechera_stricta_v1.2",
+                    "Brachypodium_sylvaticum_v1.1"="Brachypodium_sylvaticum_v1.1",
+                    "Cicer_arietinum_v1.0"="Cicer_arietinum_v1.0",
+                    "Citrus_clementina_v1.0"="Citrus_clementina_v1.0",
+                    "Capsella_grandiflora_v1.1"="Capsella_grandiflora_v1.1",
+                    "Chenopodium_quinoa_v1.0"="Chenopodium_quinoa_v1.0",
+                    "Chlamydomonas_reinhardtii_v5.5"="Chlamydomonas_reinhardtii_v5.5",
+                    "Capsella_rubella_v1.0"="Capsella_rubella_v1.0",
+                    "Cucumis_sativus_v1"="Cucumis_sativus_v1",
+                    "Chromochloris_zofingiensis_v5.2.3"="Chromochloris_zofingiensis_v5.2.3",
+                    "Daucus_carota_v1.0"="Daucus_carota_v1.0",
+                    "Dunaliella_salina_v1.0"="Dunaliella_salina_v1.0",
+                    "Eutrema_salsugineum_v1.0"="Eutrema_salsugineum_v1.0",
+                    "Fragaria_vesca_v1.1"="Fragaria_vesca_v1.1",
+                    "Gossypium_hirsutum_v1.1"="Gossypium_hirsutum_v1.1",
+                    "Glycine_max_Wm82.a2.v1"="Glycine_max_Wm82.a2.v1",
+                    "Gossypium_raimondii_v2.1"="Gossypium_raimondii_v2.1",
+                    "Helianthus_annuus_r1.2"="Helianthus_annuus_r1.2",
+                    "Hordeum_vulgare_r1"="Hordeum_vulgare_r1",
+                    "Kalanchoe_fedtschenkoi_v1.1"="Kalanchoe_fedtschenkoi_v1.1",
+                    "Kalanchoe_laxiflora_v1.1"="Kalanchoe_laxiflora_v1.1",
+                    "Lactuca_sativa_v5"="Lactuca_sativa_v5",
+                    "Linum_usitatissimum_v1.0"="Linum_usitatissimum_v1.0",
+                    "Musa_acuminata_v1"="Musa_acuminata_v1",
+                    "Malus_domestica_v1.0"="Malus_domestica_v1.0",
+                    "Manihot_esculenta_v6.1"="Manihot_esculenta_v6.1",
+                    "Mimulus_guttatus_v2.0"="Mimulus_guttatus_v2.0",
+                    "Marchantia_polymorpha_v3.1"="Marchantia_polymorpha_v3.1",
+                    "Micromonas_pusilla_CCMP1545_v3.0"="Micromonas_pusilla_CCMP1545_v3.0",
+                    "Miscanthus_sinensis_v7.1"="Miscanthus_sinensis_v7.1",
+                    "Micromonas_sp._RCC299_v3.0"="Micromonas_sp._RCC299_v3.0",
+                    "Medicago_truncatula_Mt4.0v1"="Medicago_truncatula_Mt4.0v1",
+                    "Ostreococcus_lucimarinus_v2.0"="Ostreococcus_lucimarinus_v2.0",
+                    "Oryza_sativa_v7.0"="Oryza_sativa_v7.0",
+                    "Oryza_sativa_Kitaake_v3.1"="Oryza_sativa_Kitaake_v3.1",
+                    "Oropetium_thomaeum_v1.0"="Oropetium_thomaeum_v1.0",
+                    "Populus_deltoides_WV94_v2.1"="Populus_deltoides_WV94_v2.1",
+                    "Panicum_hallii_v3.1"="Panicum_hallii_v3.1",
+                    "Prunus_persica_v2.1"="Prunus_persica_v2.1",
+                    "Populus_trichocarpa_v3.0"="Populus_trichocarpa_v3.0",
+                    "Populus_trichocarpa_v3.1"="Populus_trichocarpa_v3.1",
+                    "Porphyra_umbilicalis_v1.5"="Porphyra_umbilicalis_v1.5",
+                    "Panicum_virgatum_v1.1"="Panicum_virgatum_v1.1",
+                    "Phaseolus_vulgaris_v2.1"="Phaseolus_vulgaris_v2.1",
+                    "Ricinus_communis_v0.1"="Ricinus_communis_v0.1",
+                    "Sorghum_bicolor_v3.1"="Sorghum_bicolor_v3.1",
+                    "Sorghum_bicolor_v3.2"="Sorghum_bicolor_v3.2",
+                    "Sorghum_bicolor_Rio_v2.1"="Sorghum_bicolor_Rio_v2.1",
+                    "Sphagnum_fallax_v0.5"="Sphagnum_fallax_v0.5",
+                    "Setaria_italica_v2.2"="Setaria_italica_v2.2",
+                    "Solanum_lycopersicum_ITAG2.4"="Solanum_lycopersicum_ITAG2.4",
+                    "Selaginella_moellendorffii_v1.0"="Selaginella_moellendorffii_v1.0",
+                    "Spirodela_polyrhiza_v2"="Spirodela_polyrhiza_v2",
+                    "Salix_purpurea_v1.0"="Salix_purpurea_v1.0",
+                    "Solanum_tuberosum_v4.03"="Solanum_tuberosum_v4.03",
+                    "Setaria_viridis_v1.1"="Setaria_viridis_v1.1",
+                    "Setaria_viridis_v2.1"="Setaria_viridis_v2.1",
+                    "Triticum_aestivum_v2.2"="Triticum_aestivum_v2.2",
+                    "Theobroma_cacao_v1.1"="Theobroma_cacao_v1.1",
+                    "Trifolium_pratense_v2"="Trifolium_pratense_v2",
+                    "Volvox_carteri_v2.1"="Volvox_carteri_v2.1",
+                    "Vitis_vinifera_Genoscope.12X"="Vitis_vinifera_Genoscope.12X",
+                    "Zostera_marina_v2.2"="Zostera_marina_v2.2",
+                    "Zea_mays_B73_V3"="Zea_mays_B73_V3",
+                    "Zea_mays_PH207_v1.1"="Zea_mays_PH207_v1.1"
                   ),
                   selected=c("Zea_mays_B73_V3","Arabidopsis_thaliana_Araport11.447"),
                   multiple = TRUE)
@@ -214,7 +272,7 @@ server <- function(input, output,session) {
           return(aa)
         }
       }
-    }	else {
+    } else {
       NULL
     }
   })
@@ -227,9 +285,9 @@ server <- function(input, output,session) {
   #    NULL
   #  }
   #})
-  output$submitkeyword <- renderUI({
-    list(actionButton("submit1","submit", class = "btn-success"))
-  })
+  #output$submitkeyword <- renderUI({
+  #  list(actionButton("submit1","submit", class = "btn-success"))
+  #})
   output$setcolourandsize <- renderUI({
     if(is.null(csvfile())) {
       list(textInput("cdscol", "The colour of CDS", NULL),
@@ -435,12 +493,12 @@ server <- function(input, output,session) {
   })
   maxsymbollength <- eventReactive(!is.null(output_image_data()) & dim(output_image_data())[1] >= 1,{
     trans <- output_image_data()
-   if(!is.null(trans) ) { 
-     if(dim(trans)[1] >= 1) {
-      maxsymbollength <- max(trans$pos)
-      return(maxsymbollength)
-  }
-}
+    if(!is.null(trans) ) { 
+      if(dim(trans)[1] >= 1) {
+        maxsymbollength <- max(trans$pos)
+        return(maxsymbollength)
+      }
+    }
   })
   genicmaximum <- eventReactive(!is.null(output_image_data()) & dim(output_image_data())[1] >= 1,{
     trans <- output_image_data()
@@ -551,6 +609,31 @@ server <- function(input, output,session) {
         dplyr::mutate(domainnum = dplyr::row_number()) %>%
         dplyr::select(V9,domain,domainnum)
       trans <- dplyr::left_join(trans,tmp,by=c("V9","domain"))
+	  
+      #convert trans to trans2 for domain line usage
+	  trans2 <- as.data.frame(trans)
+      if(dim(trans2)[1] >= 2) {
+        tmp <- NULL
+        for(j in unique(trans2$V9)) {
+          tmp1 <- trans2[trans2$V9 == j,]
+		  tmp1 <- tmp1[grepl("\\w+",tmp1$domain),]
+          tmp1 <- tmp1[order(tmp1$domain,tmp1$VVV4),]
+          if(dim(tmp1)[1] >= 2) {
+            for(i in 2:dim(tmp1)[1]) {
+              #if(!is.na(tmp1$VVVV4[i]) & !is.na(tmp1$VVVV5[i-1])) {
+                if((as.numeric(tmp1$VVV4[i]) - as.numeric(tmp1$VVV5[i-1])) <= 20) {
+                  tmp1$VVV4[i] = tmp1$VVV5[i-1]
+                  tmp <- rbind(tmp,tmp1)
+                } 
+          } 
+          } else {
+                  tmp <- rbind(tmp,tmp1)
+              #}
+            }
+        }
+      }
+      trans2 <- rbind(trans2[!grepl("\\w+",trans2$domain),],tmp)
+      
       if(isTRUE(input$displaydomain)) {
         domainbackground1 <- list(
           geom_segment(data = trans[!is.na(trans$domain),],
@@ -562,7 +645,7 @@ server <- function(input, output,session) {
                        aes(x = VVVV4_domain, xend = VVVV5_domain, y = pos, yend = pos),colour = "white",
                        size=0.7*input$domainsize)
         )
-        domainline <- list(geom_segment(data = trans[!is.na(trans$domain),],
+        domainline <- list(geom_segment(data = trans2[grepl("\\w+",trans2$domain),],
                                         aes(x = VVVV4, xend = VVVV5, y = pos, yend = pos,
                                             colour = domain),size=input$domainsize))
       } else {
@@ -589,7 +672,10 @@ server <- function(input, output,session) {
                                       list(NULL),
                                       list(scale_colour_brewer(palette = input$domaincolourplatte)
                                       ))
-      output_image <- ggplot() + xlab("bp")+
+      xaxismax <- max(pretty(seq(1,maximum)))
+      axaisnonemax <- pretty(seq(1,maximum))[1:(length(pretty(seq(1,maximum)))-1)]
+      xaxislabel = c(axaisnonemax,paste0(xaxismax, " (bp)"))
+      output_image <- ggplot() + 
         domainbackground1+
         domainbackground2+
         geom_segment(data = intronline, aes(x = V4, xend = V5, y = pos, yend = pos),
@@ -607,34 +693,38 @@ server <- function(input, output,session) {
         showdomaintext+
         geom_segment(aes(x=pretty(seq(1,maximum)),
                          xend=pretty(seq(1,maximum)),
-                         y=rep(-2,length(pretty(seq(1,maximum)))),
-                         yend=rep(-2-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
-        geom_text(aes(x=pretty(seq(1,maximum)),y=-2-max(trans$pos)/40,label=pretty(seq(1,maximum))))+
+                         y=rep(0,length(pretty(seq(1,maximum)))),
+                         yend=rep(0-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
+        #geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=pretty(seq(1,maximum))))+
         theme_bw() +
         scale_y_continuous(limits = c(-2-max(trans$pos)/10,max(trans$pos)+2))+
-        scale_x_continuous(limits = c(-max(pretty(seq(1,maximum)))*0.5,max(pretty(seq(1,maximum)))+1000),
+        scale_x_continuous(limits = c(-max(pretty(seq(1,maximum)))*0.5,max(pretty(seq(1,maximum)))*1.1),
                            breaks = pretty(seq(1,maximum)))+
         geom_segment(aes(x=pretty(seq(1,maximum)),
                          xend=pretty(seq(1,maximum)),
-                         y=rep(-2,length(pretty(seq(1,maximum)))),
-                         yend=rep(-2-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
-        geom_segment(aes(x=min(pretty(seq(1,maximum))),xend=max(pretty(seq(1,maximum))),y=-2,yend=-2))+
-        geom_text(aes(x=pretty(seq(1,maximum)),y=-2-max(trans$pos)/40,label=pretty(seq(1,maximum))))+
+                         y=rep(0,length(pretty(seq(1,maximum)))),
+                         yend=rep(0-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
+        geom_segment(aes(x=min(pretty(seq(1,maximum))),xend=max(pretty(seq(1,maximum))),y=0,yend=0))+
+        #geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=pretty(seq(1,maximum))),size=input$textsize)+
+        geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=xaxislabel),size=input$textsize)+
+        #geom_text(aes(x=mean(pretty(seq(1,maximum))),y=-0.2-max(trans$pos)/40),label="bp",size=input$textsize)+
         theme(#legend.position = "none",
           panel.border = element_blank(),
           panel.grid = element_blank(),
-          text = element_text(size = 15,colour="black"),
+          #text = element_blank(),
           axis.text = element_blank(),
-          axis.ticks.y = element_blank(),
-          #axis.ticks.x = element_blank(),
-          axis.title.y = element_blank(),
-          axis.line.y = element_blank(),
-          #axis.line.x = element_line(colour="black"),
           axis.ticks = element_blank(),
+          #axis.ticks.x = element_blank(),
+          axis.title = element_blank(),
+          axis.line = element_blank(),
+          #axis.line.x = element_line(colour="black"),
+          #axis.ticks = element_blank(),
           #axis.ticks.length.x = unit(0.25, "cm"),
           panel.background = element_rect(fill = "transparent",colour = "NA"),
           plot.background = element_rect(fill = "transparent", colour = "NA"),
-          axis.text.x=element_blank())
+          axis.text.x=element_blank(),
+          legend.text = element_text(size=input$textsize*2.8),
+          legend.title = element_text(size=input$textsize*2.8))
       return(output_image)
     } else {
       print("no symbol observed")
@@ -656,7 +746,7 @@ server <- function(input, output,session) {
       #} else {
       #  list(NULL)
       #}
-	  showtranstext <- if(isTRUE(input$showtransnames)) {
+      showtranstext <- if(isTRUE(input$showtransnames)) {
         list(geom_text(data=trans[!duplicated(trans$V9),],aes(x=-max(pretty(seq(1,maximum)))*0.2,y=pos,label=V9),
                        size=input$textsize,colour=input$textcolour))
       } else {
@@ -674,6 +764,21 @@ server <- function(input, output,session) {
         dplyr::arrange(V9,VVV4_domain) %>%
         dplyr::select(V9,domain)
       trans <- dplyr::left_join(trans,tmp,by=c("V9","domain"))
+      
+      #
+	  trans2 <- trans
+	  trans2 <- as.data.frame(trans)
+	  trans2 <- trans2[!is.na(trans2$domain),]
+	  trans2 <- trans2[order(trans2$V9,trans2$domain,trans2$VVV4),]
+	  for(i in 2:dim(trans2)[1]) {
+              #if(!is.na(tmp1$VVVV4[i]) & !is.na(tmp1$VVVV5[i-1])) {
+                if((as.numeric(trans2$VVV4[i]) - as.numeric(trans2$VVV5[i-1])) <= 20 & 
+				   (trans2$domain[i] == trans2$domain[i-1]) & 
+				   (trans2$V9[i] == trans2$V9[i-1]) ) {
+                  trans2$VVV4[i] = trans2$VVV5[i-1]
+                } 
+          }
+	  
       if(isTRUE(input$displaydomain)) {
         domainbackground1 <- list(
           geom_segment(data = trans[!is.na(trans$domain),],
@@ -685,9 +790,9 @@ server <- function(input, output,session) {
                        aes(x = VVV4_domain, xend = VVV5_domain, y = pos, yend = pos),colour = "white",
                        size=0.7*input$domainsize)
         )
-        domainline <- list(geom_segment(data = trans[!is.na(trans$domain),],
+        domainline <- list(geom_segment(data = trans2[!is.na(trans2$domain),],
                                         aes(x = VVV4, xend = VVV5, y = pos, yend = pos,
-                                            colour = domain),size=input$domainsize))
+                                            colour = domain,fill=domain),size=input$domainsize))
       } else {
         domainbackground1 <- NULL
         domainbackground2 <- NULL
@@ -711,16 +816,19 @@ server <- function(input, output,session) {
                                       list(NULL),
                                       list(scale_colour_brewer(palette = input$domaincolourplatte)
                                       ))
-      output_image <- ggplot() + xlab("bp")+
-        domainbackground1+
-        domainbackground2+
+      xaxismax <- max(pretty(seq(1,maximum)))
+      axaisnonemax <- pretty(seq(1,maximum))[1:(length(pretty(seq(1,maximum)))-1)]
+      xaxislabel = c(axaisnonemax,paste0(xaxismax, " (bp)"))
+      output_image <- ggplot() + 
+        #domainbackground1+
+        #domainbackground2+
         geom_segment(data = five_prime, aes(x = VV4, xend = VV5, y = pos, yend = pos),
                      size = input$utrsize, colour = input$utr5col) + # plot three
         geom_segment(data = three_prime, aes(x = VV4, xend = VV5, y = pos, yend = pos),
                      size = input$utrsize, colour = input$utr3col) + # plot exon
         geom_segment(data = cds, aes(x = VV4, xend = VV5, y = pos, yend = pos),
                      size = input$cdssize, colour = input$cdscol) +
-        #geom_text(aes(x=pretty(seq(1,maximum)),y=-2-max(trans$pos)/40,label=pretty(seq(1,maximum))))+
+        #geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=pretty(seq(1,maximum))))+
         domainline +
         setdomaincolourplatte+
         #scale_colour_brewer(palette = input$domaincolourplatte)+
@@ -728,30 +836,34 @@ server <- function(input, output,session) {
         showdomaintext+
         theme_bw() +
         scale_y_continuous(limits = c(-2-max(trans$pos)/10,max(trans$pos)+2))+
-        scale_x_continuous(limits = c(-max(pretty(seq(1,maximum)))*0.5,max(pretty(seq(1,maximum)))+1000),
+        scale_x_continuous(limits = c(-max(pretty(seq(1,maximum)))*0.5,max(pretty(seq(1,maximum)))*1.1),
                            breaks = pretty(seq(1,maximum)))+
         #geom_segment(aes(x=-1800*maxsymbollength/16,xend=max(pretty(seq(1,maximum)))+1000,y=-Inf,yend=-Inf))+
         geom_segment(aes(x=pretty(seq(1,maximum)),
                          xend=pretty(seq(1,maximum)),
-                         y=rep(-2,length(pretty(seq(1,maximum)))),
-                         yend=rep(-2-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
-        geom_segment(aes(x=min(pretty(seq(1,maximum))),xend=max(pretty(seq(1,maximum))),y=-2,yend=-2))+
-        geom_text(aes(x=pretty(seq(1,maximum)),y=-2-max(trans$pos)/40,label=pretty(seq(1,maximum))))+
+                         y=rep(0,length(pretty(seq(1,maximum)))),
+                         yend=rep(0-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
+        geom_segment(aes(x=min(pretty(seq(1,maximum))),xend=max(pretty(seq(1,maximum))),y=0,yend=0))+
+        #geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=pretty(seq(1,maximum))),size=input$textsize)+
+        geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=xaxislabel),size=input$textsize)+
+        #geom_text(aes(x=mean(pretty(seq(1,maximum))),y=-0.2-max(trans$pos)/40),label="bp",size=input$textsize)+
         theme(#legend.position = "none",
           panel.border = element_blank(),
           panel.grid = element_blank(),
-          text = element_text(size = 15,colour="black"),
+          #text = element_blank(),
           axis.text = element_blank(),
-          axis.ticks.y = element_blank(),
-          #axis.ticks.x = element_blank(),
-          axis.title.y = element_blank(),
-          axis.line.y = element_blank(),
-          #axis.line.x = element_line(colour="black"),
           axis.ticks = element_blank(),
+          #axis.ticks.x = element_blank(),
+          axis.title = element_blank(),
+          axis.line = element_blank(),
+          #axis.line.x = element_line(colour="black"),
+          #axis.ticks = element_blank(),
           #axis.ticks.length.x = unit(0.25, "cm"),
           panel.background = element_rect(fill = "transparent",colour = "NA"),
           plot.background = element_rect(fill = "transparent", colour = "NA"),
-          axis.text.x=element_blank())
+          axis.text.x=element_blank(),
+          legend.text = element_text(size=input$textsize*2.8),
+          legend.title = element_text(size=input$textsize*2.8))
       return(output_image)
     } else {
       print("no symbol observed")
@@ -790,6 +902,20 @@ server <- function(input, output,session) {
         dplyr::mutate(domainnum = dplyr::row_number()) %>%
         dplyr::select(V9,domain,domainnum)
       trans <- dplyr::left_join(trans,tmp,by=c("V9","domain"))
+      
+      trans2 <- trans
+	  trans2 <- as.data.frame(trans)
+	  trans2 <- trans2[!is.na(trans2$domain),]
+	  trans2 <- trans2[order(trans2$V9,trans2$domain,trans2$VVV4),]
+	  for(i in 2:dim(trans2)[1]) {
+              #if(!is.na(tmp1$VVVV4[i]) & !is.na(tmp1$VVVV5[i-1])) {
+                if((as.numeric(trans2$VVV4[i]) - as.numeric(trans2$VVV5[i-1])) <= 20 & 
+				   (trans2$domain[i] == trans2$domain[i-1]) & 
+				   (trans2$V9[i] == trans2$V9[i-1]) ) {
+                  trans2$VVV4[i] = trans2$VVV5[i-1]
+                } 
+          }
+	  
       maxsymbollength <- max(nchar(as.character(trans$V9)))
       #showtranstext <- if(isTRUE(input$showtransnames)) {
       #  list(geom_text(data=trans[!duplicated(trans$V9),],
@@ -798,7 +924,7 @@ server <- function(input, output,session) {
       #} else {
       #  list(NULL)
       #}
-	  showtranstext <- if(isTRUE(input$showtransnames)) {
+      showtranstext <- if(isTRUE(input$showtransnames)) {
         list(geom_text(data=trans[!duplicated(trans$V9),],aes(x=-max(pretty(seq(1,maximum)))*0.2,y=pos,label=V9),
                        size=input$textsize,colour=input$textcolour))
       } else {
@@ -816,9 +942,9 @@ server <- function(input, output,session) {
                        aes(x = VVV4_domain, xend = VVV5_domain, y = pos, yend = pos),
                        colour="white",size=0.7*input$domainsize)
         )
-        domainline <- list(geom_segment(data = trans[!is.na(trans$domain),],
+        domainline <- list(geom_segment(data = trans2[!is.na(trans2$domain),],
                                         aes(x = VVV4, xend = VVV5, y = pos, yend = pos,
-                                            colour = domain),size=input$domainsize))
+                                            colour = domain,fill=domain),size=input$domainsize))
       } else {
         domainbackground1 <- NULL
         domainbackground2 <- NULL
@@ -847,9 +973,12 @@ server <- function(input, output,session) {
                                       list(NULL),
                                       list(scale_colour_brewer(palette = input$domaincolourplatte)
                                       ))
-      output_image <- ggplot() + xlab("bp")+
-        domainbackground1+
-        domainbackground2+
+      xaxismax <- max(pretty(seq(1,maximum)))
+      axaisnonemax <- pretty(seq(1,maximum))[1:(length(pretty(seq(1,maximum)))-1)]
+      xaxislabel = c(axaisnonemax,paste0(xaxismax, " (bp)"))
+      output_image <- ggplot() + 
+        #domainbackground1+
+        #domainbackground2+
         geom_segment(data = trans, aes(x = cds_start, xend = cds_end, y = pos, yend = pos),
                      size = input$cdssize, colour = input$cdscol) +
         domainline+
@@ -859,30 +988,34 @@ server <- function(input, output,session) {
         showdomaintext+
         theme_bw() +
         scale_y_continuous(limits = c(-2-max(trans$pos)/10,max(trans$pos)+2))+
-        scale_x_continuous(limits = c(-max(pretty(seq(1,maximum)))*0.5,max(pretty(seq(1,maximum)))+1000),
+        scale_x_continuous(limits = c(-max(pretty(seq(1,maximum)))*0.5,max(pretty(seq(1,maximum)))*1.1),
                            breaks = pretty(seq(1,maximum)))+
         #geom_segment(aes(x=-1800*maxsymbollength/16,xend=max(pretty(seq(1,maximum)))+1000,y=-Inf,yend=-Inf))+
         geom_segment(aes(x=pretty(seq(1,maximum)),
                          xend=pretty(seq(1,maximum)),
-                         y=rep(-2,length(pretty(seq(1,maximum)))),
-                         yend=rep(-2-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
-        geom_segment(aes(x=min(pretty(seq(1,maximum))),xend=max(pretty(seq(1,maximum))),y=-2,yend=-2))+
-        geom_text(aes(x=pretty(seq(1,maximum)),y=-2-max(trans$pos)/40,label=pretty(seq(1,maximum))))+
+                         y=rep(0,length(pretty(seq(1,maximum)))),
+                         yend=rep(0-max(trans$pos)/75,length(pretty(seq(1,maximum))))))+
+        geom_segment(aes(x=min(pretty(seq(1,maximum))),xend=max(pretty(seq(1,maximum))),y=0,yend=0))+
+        #geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=pretty(seq(1,maximum))),size=input$textsize)+
+        geom_text(aes(x=pretty(seq(1,maximum)),y=0-max(trans$pos)/20,label=xaxislabel),size=input$textsize)+
+        #geom_text(aes(x=mean(pretty(seq(1,maximum))),y=-0.2-max(trans$pos)/40),label="bp",size=input$textsize)+
         theme(#legend.position = "none",
           panel.border = element_blank(),
           panel.grid = element_blank(),
-          text = element_text(size = 15,colour="black"),
+          #text = element_blank(),
           axis.text = element_blank(),
-          axis.ticks.y = element_blank(),
-          #axis.ticks.x = element_blank(),
-          axis.title.y = element_blank(),
-          axis.line.y = element_blank(),
-          #axis.line.x = element_line(colour="black"),
           axis.ticks = element_blank(),
+          #axis.ticks.x = element_blank(),
+          axis.title = element_blank(),
+          axis.line = element_blank(),
+          #axis.line.x = element_line(colour="black"),
+          #axis.ticks = element_blank(),
           #axis.ticks.length.x = unit(0.25, "cm"),
           panel.background = element_rect(fill = "transparent",colour = "NA"),
           plot.background = element_rect(fill = "transparent", colour = "NA"),
-          axis.text.x=element_blank())
+          axis.text.x=element_blank(),
+          legend.text = element_text(size=input$textsize*2.8),
+          legend.title = element_text(size=input$textsize*2.8))
       return(output_image)
     } else {
       print("no symbol observed")
@@ -939,7 +1072,7 @@ server <- function(input, output,session) {
   },height = function() {
     session$clientData$output_cdsvisualizer_width
   })
-  output$summary =  renderDataTable(summarydata())
+  output$Summary =  renderDataTable(summarydata())
   devicename <- reactive({
     xx=paste0("save.",input$figuretype)
     xx
@@ -978,7 +1111,7 @@ server <- function(input, output,session) {
     content = function(file) {
       write.csv(summarydata(),file=file,row.names = FALSE)
     })
-  observeEvent(input$btn,
-               introjs(session))
-  
+  #observeEvent(input$intro,
+  #             introjs(session))
+  #
 }
