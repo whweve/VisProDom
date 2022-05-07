@@ -2,7 +2,7 @@
 #' @description  plot gene structure and protein domain for given gene across genomes
 #' @author Hongwei Wang <\email{whweve@163.com}>
 #' @export
-#' @import  shiny ggplot2 rintrojs dplyr data.table fuzzyjoin fresh shinyBS
+#' @import  shiny ggplot2 rintrojs dplyr data.table fuzzyjoin fresh shinyBS plotly
 library(shiny)
 library(ggplot2)
 library(rintrojs)
@@ -11,6 +11,7 @@ library(data.table)
 library(markdown)
 library(fresh)
 library(shinyBS)
+library(plotly)
 #options(shiny.maxRequestSize=1000*1024^2,shiny.usecairo=TRUE,res=300)
 options(shiny.usecairo=TRUE,res=300)
 server <- function(input, output,session) {
@@ -1054,19 +1055,19 @@ server <- function(input, output,session) {
     names(trans2)[names(trans2)=="V9"] <- "transcript"
     trans <- merge(trans1,trans2,by="transcript")
   })
-  output$genicvisualizer <- renderPlot({
+  output$genicvisualizer <- renderPlotly({
     genicvisualizer()+
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
   },height = function() {
     session$clientData$output_genicvisualizer_width
   })
-  output$transvisualizer <- renderPlot({
+  output$transvisualizer <- renderPlotly({
     transvisualizer()+
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
   } ,height = function() {
     session$clientData$output_transvisualizer_width
   })
-  output$cdsvisualizer <- renderPlot({
+  output$cdsvisualizer <- renderPlotly({
     cdsvisualizer()+
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
   },height = function() {
