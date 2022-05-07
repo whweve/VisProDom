@@ -2,7 +2,7 @@
 #' @description  plot gene structure and protein domain for given gene across species
 #' @author Hongwei Wang <\email{whweve@163.com}>
 #' @export
-#' @import  shiny ggplot2 rintrojs dplyr data.table fuzzyjoin fresh shinyBS
+#' @import  shiny ggplot2 rintrojs dplyr data.table fuzzyjoin fresh shinyBS plotly
 library(shiny)
 library(ggplot2)
 library(rintrojs)
@@ -147,21 +147,21 @@ ui <-  navbarPage(
           tabsetPanel(
             tabPanel(
               h4("Genic feature visualizer"),
-              plotOutput("genicvisualizer",height = "auto",
+              plotlyOutput("genicvisualizer",height = "auto",
                          dblclick = "plot1_dblclick",
                          brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
               )
             ),
             tabPanel(
               h4("Transcript feature visualizer"),
-              plotOutput("transvisualizer",height = "auto",
+              plotlyOutput("transvisualizer",height = "auto",
                          dblclick = "plot1_dblclick",
                          brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
               )
             ),
             tabPanel(
               h4("CDS visualizer"),
-              plotOutput("cdsvisualizer",height = "auto",
+              plotlyOutput("cdsvisualizer",height = "auto",
                          dblclick = "plot1_dblclick",
                          brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
               )
