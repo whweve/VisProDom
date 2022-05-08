@@ -3,7 +3,7 @@
 #' @author Hongwei Wang <\email{whweve@163.com}>
 #' @export
 #' @return a shiny app
-#' @import shinydashboard shiny ggplot2 rintrojs dplyr data.table fresh shinyBS
+#' @import shiny ggplot2 rintrojs dplyr data.table fresh shinyBS
 runVPDapp <- function() {
   appDir <- system.file("VisProDom", package = "VisProDom")
   if (appDir == "") {

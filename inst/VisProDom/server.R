@@ -2,28 +2,48 @@
 #' @description  plot gene structure and protein domain for given gene across genomes
 #' @author Hongwei Wang <\email{whweve@163.com}>
 #' @export
-#' @import shinydashboard shiny ggplot2 rintrojs dplyr data.table fuzzyjoin 
+#' @import shiny ggplot2 rintrojs dplyr data.table fuzzyjoin fresh shinyBS plotly
 library(shiny)
-library(shinydashboard)
 library(ggplot2)
 library(rintrojs)
 library(dplyr)
 library(data.table)
 library(markdown)
-options(shiny.maxRequestSize=1000*1024^2,shiny.usecairo=TRUE,res=300)
+library(fresh)
+library(shinyBS)
+#options(shiny.maxRequestSize=1000*1024^2,shiny.usecairo=TRUE,res=300)
+options(shiny.usecairo=TRUE,res=300)
 server <- function(input, output,session) {
   
   #observeEvent(input.tabvals == 1, {
   #      shinyjs::addClass(selector = "body", class = "sidebar-collapse")
   #    })
-  
+  #observe(print(input$navbar))
+  observe({
+      if(input$navbar == "stop1") {
+        stopApp()
+      }
+    })
+    
+  observe({
+      if(input$navbar == "refresh1") {
+        #stopApp()
+		#VisProDom::runVPDapp()
+		#stopApp()
+		#restartApp()
+		session$reload()
+      }
+    })
+	
   observeEvent("", {
     showModal(modalDialog(
       includeHTML("www/intro_text.html"),
       easyClose = TRUE,
       footer = tagList(
         #style="text-align: center",
-        bsButton(inputId = "intro", label = "INTRODUCTION TOUR", icon = icon("info-circle"),class = "danger")
+		div(style = "margin-right:33.1%;colour:green",
+        actionButton(inputId = "intro", label = "INTRODUCTION TOUR", icon = icon("info-circle"),class = "danger")
+		)
       )
     ))
   })
@@ -40,12 +60,14 @@ server <- function(input, output,session) {
   )
   
   observeEvent(input$submit1, {
+  div(class="well","background-color:green",
     updateButton(
       session, 
       inputId = "submit1", 
       label = "Update VisProDom", 
-      #icon = icon("bar-chart-o"), 
-      style = "primary")
+      icon = icon("circle-check"), 
+      style = "background-color:red")
+	  )
   })
   
   output$setgffnumber <- renderUI({
@@ -594,7 +616,7 @@ server <- function(input, output,session) {
         tmp <- NULL
         for(j in unique(trans2$V9)) {
           tmp1 <- trans2[trans2$V9 == j,]
-		  tmp1 <- tmp1[grepl("\\w+",tmp$domain),]
+		  tmp1 <- tmp1[grepl("\\w+",tmp1$domain),]
           tmp1 <- tmp1[order(tmp1$domain,tmp1$VVV4),]
           if(dim(tmp1)[1] >= 2) {
             for(i in 2:dim(tmp1)[1]) {
@@ -623,7 +645,7 @@ server <- function(input, output,session) {
                        aes(x = VVVV4_domain, xend = VVVV5_domain, y = pos, yend = pos),colour = "white",
                        size=0.7*input$domainsize)
         )
-        domainline <- list(geom_segment(data = trans2,
+        domainline <- list(geom_segment(data = trans2[grepl("\\w+",trans2$domain),],
                                         aes(x = VVVV4, xend = VVVV5, y = pos, yend = pos,
                                             colour = domain),size=input$domainsize))
       } else {
@@ -743,29 +765,20 @@ server <- function(input, output,session) {
         dplyr::select(V9,domain)
       trans <- dplyr::left_join(trans,tmp,by=c("V9","domain"))
       
-      trans2 <- as.data.frame(trans)
-      if(dim(trans2)[1] >= 2) {
-        tmp <- NULL
-        for(j in unique(trans2$V9)) {
-          tmp1 <- trans2[trans2$V9 == j,]
-		  tmp1 <- tmp1[grepl("\\w+",tmp$domain),]
-          tmp1 <- tmp1[order(tmp1$domain,tmp1$VVV4),]
-          if(dim(tmp1)[1] >= 2) {
-            for(i in 2:dim(tmp1)[1]) {
+      #
+	  trans2 <- trans
+	  trans2 <- as.data.frame(trans)
+	  trans2 <- trans2[!is.na(trans2$domain),]
+	  trans2 <- trans2[order(trans2$V9,trans2$domain,trans2$VVV4),]
+	  for(i in 2:dim(trans2)[1]) {
               #if(!is.na(tmp1$VVVV4[i]) & !is.na(tmp1$VVVV5[i-1])) {
-                if((as.numeric(tmp1$VVV4[i]) - as.numeric(tmp1$VVV5[i-1])) <= 20) {
-                  tmp1$VVV4[i] = tmp1$VVV5[i-1]
-                  tmp <- rbind(tmp,tmp1)
+                if((as.numeric(trans2$VVV4[i]) - as.numeric(trans2$VVV5[i-1])) <= 20 & 
+				   (trans2$domain[i] == trans2$domain[i-1]) & 
+				   (trans2$V9[i] == trans2$V9[i-1]) ) {
+                  trans2$VVV4[i] = trans2$VVV5[i-1]
                 } 
-          } 
-          } else {
-                  tmp <- rbind(tmp,tmp1)
-              #}
-            }
-        }
-      }
-      trans2 <- rbind(trans2[!grepl("\\w+",trans2$domain),],tmp)
-      
+          }
+	  
       if(isTRUE(input$displaydomain)) {
         domainbackground1 <- list(
           geom_segment(data = trans[!is.na(trans$domain),],
@@ -777,9 +790,9 @@ server <- function(input, output,session) {
                        aes(x = VVV4_domain, xend = VVV5_domain, y = pos, yend = pos),colour = "white",
                        size=0.7*input$domainsize)
         )
-        domainline <- list(geom_segment(data = trans2,
+        domainline <- list(geom_segment(data = trans2[!is.na(trans2$domain),],
                                         aes(x = VVV4, xend = VVV5, y = pos, yend = pos,
-                                            colour = domain),size=input$domainsize))
+                                            colour = domain,fill=domain),size=input$domainsize))
       } else {
         domainbackground1 <- NULL
         domainbackground2 <- NULL
@@ -807,8 +820,8 @@ server <- function(input, output,session) {
       axaisnonemax <- pretty(seq(1,maximum))[1:(length(pretty(seq(1,maximum)))-1)]
       xaxislabel = c(axaisnonemax,paste0(xaxismax, " (bp)"))
       output_image <- ggplot() + 
-        domainbackground1+
-        domainbackground2+
+        #domainbackground1+
+        #domainbackground2+
         geom_segment(data = five_prime, aes(x = VV4, xend = VV5, y = pos, yend = pos),
                      size = input$utrsize, colour = input$utr5col) + # plot three
         geom_segment(data = three_prime, aes(x = VV4, xend = VV5, y = pos, yend = pos),
@@ -890,28 +903,18 @@ server <- function(input, output,session) {
         dplyr::select(V9,domain,domainnum)
       trans <- dplyr::left_join(trans,tmp,by=c("V9","domain"))
       
-      trans2 <- as.data.frame(trans)
-      if(dim(trans2)[1] >= 2) {
-        tmp <- NULL
-        for(j in unique(trans2$V9)) {
-          tmp1 <- trans2[trans2$V9 == j,]
-		  tmp1 <- tmp1[grepl("\\w+",tmp$domain),]
-          tmp1 <- tmp1[order(tmp1$domain,tmp1$VVV4),]
-          if(dim(tmp1)[1] >= 2) {
-            for(i in 2:dim(tmp1)[1]) {
+      trans2 <- trans
+	  trans2 <- as.data.frame(trans)
+	  trans2 <- trans2[!is.na(trans2$domain),]
+	  trans2 <- trans2[order(trans2$V9,trans2$domain,trans2$VVV4),]
+	  for(i in 2:dim(trans2)[1]) {
               #if(!is.na(tmp1$VVVV4[i]) & !is.na(tmp1$VVVV5[i-1])) {
-                if((as.numeric(tmp1$VVV4[i]) - as.numeric(tmp1$VVV5[i-1])) <= 20) {
-                  tmp1$VVV4[i] = tmp1$VVV5[i-1]
-                  tmp <- rbind(tmp,tmp1)
+                if((as.numeric(trans2$VVV4[i]) - as.numeric(trans2$VVV5[i-1])) <= 20 & 
+				   (trans2$domain[i] == trans2$domain[i-1]) & 
+				   (trans2$V9[i] == trans2$V9[i-1]) ) {
+                  trans2$VVV4[i] = trans2$VVV5[i-1]
                 } 
-          } 
-          } else {
-                  tmp <- rbind(tmp,tmp1)
-              #}
-            }
-        }
-      }
-      trans2 <- rbind(trans2[!grepl("\\w+",trans2$domain),],tmp)
+          }
 	  
       maxsymbollength <- max(nchar(as.character(trans$V9)))
       #showtranstext <- if(isTRUE(input$showtransnames)) {
@@ -939,9 +942,9 @@ server <- function(input, output,session) {
                        aes(x = VVV4_domain, xend = VVV5_domain, y = pos, yend = pos),
                        colour="white",size=0.7*input$domainsize)
         )
-        domainline <- list(geom_segment(data = trans2,
+        domainline <- list(geom_segment(data = trans2[!is.na(trans2$domain),],
                                         aes(x = VVV4, xend = VVV5, y = pos, yend = pos,
-                                            colour = domain),size=input$domainsize))
+                                            colour = domain,fill=domain),size=input$domainsize))
       } else {
         domainbackground1 <- NULL
         domainbackground2 <- NULL
@@ -974,8 +977,8 @@ server <- function(input, output,session) {
       axaisnonemax <- pretty(seq(1,maximum))[1:(length(pretty(seq(1,maximum)))-1)]
       xaxislabel = c(axaisnonemax,paste0(xaxismax, " (bp)"))
       output_image <- ggplot() + 
-        domainbackground1+
-        domainbackground2+
+        #domainbackground1+
+        #domainbackground2+
         geom_segment(data = trans, aes(x = cds_start, xend = cds_end, y = pos, yend = pos),
                      size = input$cdssize, colour = input$cdscol) +
         domainline+
@@ -1070,7 +1073,6 @@ server <- function(input, output,session) {
     session$clientData$output_cdsvisualizer_width
   })
   output$Summary =  renderDataTable(summarydata())
-  output$Summary1 =  renderDataTable(output_image_data())
   devicename <- reactive({
     xx=paste0("save.",input$figuretype)
     xx

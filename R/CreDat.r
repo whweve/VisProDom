@@ -2,7 +2,7 @@
 #' @description  a function to merge gff file and protein domain annotation file
 #' @author Hongwei Wang <\email{whweve@163.com}>
 #' @export
-#' @import shinydashboard shiny ggplot2 rintrojs dplyr data.table
+#' @import shiny ggplot2 rintrojs dplyr data.table
 #' @return a dataframe 
 #' @examples
 #' data(gff)
