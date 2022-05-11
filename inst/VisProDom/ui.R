@@ -11,7 +11,7 @@ library(data.table)
 library(markdown)
 library(fresh)
 library(shinyBS)
-
+library(plotly)
 dreamRs <- create_theme(
   theme = "default",
   #bs_vars_global(
@@ -142,31 +142,52 @@ ui <-  navbarPage(
         )
 		),
         mainPanel(
+		  style = "overflow-y:auto;overflow-x:auto ",
           #width=9,
           #width = 9
           tabsetPanel(
-            tabPanel(
+            #tabPanel(
+            #  h4("Genic feature visualizer"),
+            #  plotOutput("genicvisualizer",
+			##                height = "auto",
+            #             dblclick = "plot1_dblclick",
+            #             brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
+            #  )
+            #),
+            #tabPanel(
+            #  h4("Transcript feature visualizer"),
+            #  plotOutput("transvisualizer",height = "auto",
+            #            dblclick = "plot1_dblclick",
+            #             brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
+            #  )
+            #),
+            #tabPanel(
+            #  h4("CDS visualizer"),
+            #  plotOutput("cdsvisualizer",height = "auto",
+            #             dblclick = "plot1_dblclick",
+            #             brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
+            #  )
+            #),
+			
+			tabPanel(
               h4("Genic feature visualizer"),
-              plotOutput("genicvisualizer",
-			                height = "auto",
-                         dblclick = "plot1_dblclick",
-                         brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
-              )
-            ),
+              plotlyOutput("genicvisualizer",
+			                height = "auto"
+                         )
+              ),
             tabPanel(
               h4("Transcript feature visualizer"),
-              plotOutput("transvisualizer",height = "auto",
-                        dblclick = "plot1_dblclick",
-                         brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
+              plotlyOutput("transvisualizer",
+			  height = "auto"
               )
             ),
             tabPanel(
               h4("CDS visualizer"),
-              plotOutput("cdsvisualizer",height = "auto",
-                         dblclick = "plot1_dblclick",
-                         brush = brushOpts(id = "plot1_brush",resetOnNew = TRUE)
+              plotlyOutput("cdsvisualizer",
+			  height = "auto"
               )
             ),
+			
             tabPanel(
               h4(span(tagList(icon("table"),"Summary"))),
               dataTableOutput("Summary")

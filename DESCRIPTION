@@ -3,8 +3,8 @@ Title: VisProDom: an interactive Shiny/R application to display protein domains 
 Version: 1.0
 Authors@R: c(person("Hongwei", "Wang", role=c("aut", "cre", "cph"), email="whweve@163.com"))
 Description: VisProDom, a shiny application to display protein domain accrose transcript features and genomes.
-Depends: R (>= 3.5.1),shiny,ggplot2,rintrojs,dplyr,data.table,fresh,shinyBS
-Imports: shiny,ggplot2,rintrojs,dplyr,data.table,fresh,shinyBS
+Depends: R (>= 3.5.1),shiny,ggplot2,rintrojs,dplyr,data.table,fresh,shinyBS,plotly
+Imports: shiny,ggplot2,rintrojs,dplyr,data.table,fresh,shinyBS,plotly
 License: GPL-3 | file LICENSE
 Encoding: UTF-8
 LazyData: true

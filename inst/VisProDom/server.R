@@ -11,6 +11,7 @@ library(data.table)
 library(markdown)
 library(fresh)
 library(shinyBS)
+library(plotly)
 #options(shiny.maxRequestSize=1000*1024^2,shiny.usecairo=TRUE,res=300)
 options(shiny.usecairo=TRUE,res=300)
 server <- function(input, output,session) {
@@ -317,7 +318,7 @@ server <- function(input, output,session) {
     } else {
       list(
         checkboxInput("showtransnames",label = "Set names to show or not",TRUE),
-        numericInput("textsize", "The size of transcript name", 6-0.009901*maxsymbollength()),
+        numericInput("textsize", "The size of transcript name", 5.2-0.009901*maxsymbollength()),
         textInput("textcolour", "The colour of text", "black")
       )
     }
@@ -775,7 +776,7 @@ server <- function(input, output,session) {
                 if((as.numeric(trans2$VVV4[i]) - as.numeric(trans2$VVV5[i-1])) <= 20 & 
 				   (trans2$domain[i] == trans2$domain[i-1]) & 
 				   (trans2$V9[i] == trans2$V9[i-1]) ) {
-                  trans2$VVV4[i] = trans2$VVV5[i-1]
+                  trans2$VVV4[i] = trans2$VVV4[i-1]
                 } 
           }
 	  
@@ -912,7 +913,7 @@ server <- function(input, output,session) {
                 if((as.numeric(trans2$VVV4[i]) - as.numeric(trans2$VVV5[i-1])) <= 20 & 
 				   (trans2$domain[i] == trans2$domain[i-1]) & 
 				   (trans2$V9[i] == trans2$V9[i-1]) ) {
-                  trans2$VVV4[i] = trans2$VVV5[i-1]
+                  trans2$VVV4[i] = trans2$VVV4[i-1]
                 } 
           }
 	  
@@ -1054,23 +1055,16 @@ server <- function(input, output,session) {
     names(trans2)[names(trans2)=="V9"] <- "transcript"
     trans <- merge(trans1,trans2,by="transcript")
   })
-  output$genicvisualizer <- renderPlot({
-    genicvisualizer()+
-      coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
-  },height = function() {
-    session$clientData$output_genicvisualizer_width
+  
+  cdata <- session$clientData
+  output$genicvisualizer <- renderPlotly({
+    ggplotly(genicvisualizer(), height = session$clientData$output_genicvisualizer_width)
   })
-  output$transvisualizer <- renderPlot({
-    transvisualizer()+
-      coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
-  } ,height = function() {
-    session$clientData$output_transvisualizer_width
+  output$transvisualizer <- renderPlotly({
+    ggplotly(transvisualizer(), height = session$clientData$output_transvisualizer_width)
   })
-  output$cdsvisualizer <- renderPlot({
-    cdsvisualizer()+
-      coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
-  },height = function() {
-    session$clientData$output_cdsvisualizer_width
+  output$cdsvisualizer <- renderPlotly({
+    ggplotly(cdsvisualizer(), height = session$clientData$output_cdsvisualizer_width)
   })
   output$Summary =  renderDataTable(summarydata())
   devicename <- reactive({
