@@ -43,10 +43,10 @@ ui <-  navbarPage(
       sidebarPanel(
         width = 4,
         style = "overflow-y:auto; max-height: 100vh; position:relative;",
-        div(class = "well", style = "height:100%;width:100%;colour:red",
+        div(class = "well", style = "height:100%;width:100%;colour:blue",
             introBox(
               div(style = "margin-left:30%",
-                bsButton("submit1",h4("VisProDom Tour"),style="background-color:blue",icon=icon("circle-play"))
+                bsButton("intro1",h4("VisProDom Tour"),style="background-color:blue",icon=icon("circle-play"))
               ),
               data.step = 1,
               data.intro = "Introduction to VisProDom. Update the graph once modifications have made.",
@@ -55,7 +55,7 @@ ui <-  navbarPage(
         ),
         br(),
         #br(),
-        div(class = "well", style = "height:100%;width:100%;",
+        div(class = "well", style = "height:100%;width:100%;;colour:red",
             introBox(data.step = 2, data.intro = "read in gff file",
                      h4("* Step 1: Open file",style = "color: black;text-align: left;margin-left:6px"),
                      selectInput("datasource","Datasource:",
@@ -70,7 +70,7 @@ ui <-  navbarPage(
         ),
         br(),
         #br(),
-        div(class = "well", style = "height:100%;width:100%;",
+        div(class = "well", style = "height:100%;width:100%",
             introBox(data.step = 3, data.intro = "Set transcript or domain nanes",
                      h4("* Step 2: Keyword",style = "color: black;text-align: left;margin-left:6px"),
                      selectInput("keywordsource","Keyword:",
@@ -80,15 +80,22 @@ ui <-  navbarPage(
                      uiOutput("selectpfam"),
                      uiOutput("selectkeyword"),
                      uiOutput("checkdomainrelation"),
-                     uiOutput("submitkeyword"),
+                     #uiOutput("submitkeyword"),
                      style = "background-color: white;text-align: left;margin-left:20px"
             )
         ),
         br(),
+		div(class = "well", style = "height:100%;width:100%;",
+            introBox(data.step = 4, data.intro = "Run or comfirm any changes",
+                     h4("* Step 3: Keyword",style = "color: black;text-align: left;margin-left:6px"),
+                     uiOutput("submitkeyword"),
+                     style = "background-color: white;text-align: left;margin-left:20px"
+            )
+        ),
         #br(),
         div(class = "well", style = "height:100%;width:100%;",
-            introBox(data.step = 4, data.intro = "Modify colours of the genomic features",
-                     h4("step 3: Colour and size",style = "color: black;text-align: left;margin-left:6px"),
+            introBox(data.step = 5, data.intro = "Modify colours of the genomic features",
+                     h4("step 4: Colour and size",style = "color: black;text-align: left;margin-left:6px"),
                      uiOutput("setcolourandsize"),
                      style = "background-color: white;text-align: left;margin-left:20px"
             )
@@ -96,8 +103,8 @@ ui <-  navbarPage(
         br(),
         #br(),
         div(class = "well", style = "height:100%;width:100%;",
-            introBox(data.step = 5, data.intro = "label the name of transcript",
-                     h4("step 4: Transcript name",style = "color: black;text-align: left;margin-left:6px"),
+            introBox(data.step = 6, data.intro = "label the name of transcript",
+                     h4("step 5: Transcript name",style = "color: black;text-align: left;margin-left:6px"),
                      uiOutput("showtransname"),
                      style = "background-color: white;text-align: left;margin-left:20px"
             )
@@ -105,8 +112,8 @@ ui <-  navbarPage(
         br(),
         #br(),
         div(class = "well", style = "height:100%;width:100%;",
-            introBox(data.step = 6, data.intro = "Label the name of domain",
-                     h4("step 5: Domain name",style = "color: black;text-align: left;margin-left:6px"),
+            introBox(data.step = 7, data.intro = "Label the name of domain",
+                     h4("step 6: Domain name",style = "color: black;text-align: left;margin-left:6px"),
                      checkboxInput("displaydomain",label = "Domain",TRUE),
                      uiOutput("showdomainname"),
                      style = "background-color: white;text-align: left;margin-left:20px"
@@ -115,8 +122,8 @@ ui <-  navbarPage(
         br(),
         #br(),
         div(class = "well", style = "height:100%;width:100%;",
-            introBox(data.step = 7, data.intro = "Selective print domain name",
-                     h4("step 6: Highlight domain",style = "color: black;text-align: left;margin-left:6px"),
+            introBox(data.step = 8, data.intro = "Selective print domain name",
+                     h4("step 7: Highlight domain",style = "color: black;text-align: left;margin-left:6px"),
                      textAreaInput("domainhighlight","highlight domain name",NULL),
                      
                      style = "background-color: white;text-align: left;margin-left:20px"
@@ -125,8 +132,8 @@ ui <-  navbarPage(
         br(),
         #br(),
         div(class = "well", style = "height:100%;width:100%;",
-            introBox(data.step = 8, data.intro = "Export the image with width, heigt and resolution",
-                     h4("step 7: Export image",style = "color: black;text-align: left;margin-left:6px"),
+            introBox(data.step = 9, data.intro = "Export the image with width, heigt and resolution",
+                     h4("step 8: Export image",style = "color: black;text-align: left;margin-left:6px"),
                      selectInput("outputtype","export:",
                                  choices = c("Genic feature"="savegenic",
                                              "Transcript feature"="savetrans",

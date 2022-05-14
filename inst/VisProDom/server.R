@@ -49,10 +49,13 @@ server <- function(input, output,session) {
     ))
   })
   
-  observeEvent(input$intro,{
+  observeEvent(input$intro ,{
     removeModal()
   })
   
+    observeEvent(input$intro1 ,{
+    removeModal()
+  })
   # show intro tour
   observeEvent(input$intro,
                introjs(session, options = list("nextLabel" = "Continue",
@@ -60,16 +63,16 @@ server <- function(input, output,session) {
                                                "doneLabel" = "Alright. Let's go"))
   )
   
-  observeEvent(input$submit1, {
-  div(class="well","background-color:green",
-    updateButton(
-      session, 
-      inputId = "submit1", 
-      label = "Update VisProDom", 
-      icon = icon("circle-check"), 
-      style = "background-color:red")
-	  )
-  })
+  #observeEvent(input$submit1, {
+  #div(class="well","background-color:green",
+  #  updateButton(
+  #    session, 
+  #    inputId = "submit1", 
+  #    label = "Update VisProDom", 
+  #    icon = icon("circle-check"), 
+  #    style = "background-color:red")
+#	  )
+  #})
   
   output$setgffnumber <- renderUI({
     if(input$datasource=="readgffcheck") {
@@ -286,9 +289,9 @@ server <- function(input, output,session) {
   #    NULL
   #  }
   #})
-  #output$submitkeyword <- renderUI({
-  #  list(actionButton("submit1","submit", class = "btn-success"))
-  #})
+  output$submitkeyword <- renderUI({
+    list(actionButton("submit1","submit", class = "btn-success"))
+  })
   output$setcolourandsize <- renderUI({
     if(is.null(csvfile())) {
       list(textInput("cdscol", "The colour of CDS", NULL),
