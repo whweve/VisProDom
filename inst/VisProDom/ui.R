@@ -87,7 +87,7 @@ ui <-  navbarPage(
         br(),
 		div(class = "well", style = "height:100%;width:100%;",
             introBox(data.step = 4, data.intro = "Run or comfirm any changes",
-                     h4("* Step 3: Keyword",style = "color: black;text-align: left;margin-left:6px"),
+                     h4("* Step 3: Confirm selection",style = "color: black;text-align: left;margin-left:6px"),
                      uiOutput("submitkeyword"),
                      style = "background-color: white;text-align: left;margin-left:20px"
             )
