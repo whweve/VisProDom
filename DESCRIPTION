@@ -1,9 +1,11 @@
 Package: VisProDom
-Title: VisProDom: an interactive Shiny/R application to display protein domains with transcriptional features
+Title: VisProDom: an interactive Shiny/R application to display protein
+        domains with transcriptional features
 Version: 1.0
 Authors@R: c(person("Hongwei", "Wang", role=c("aut", "cre", "cph"), email="whweve@163.com"))
 Description: VisProDom, a shiny application to display protein domain accrose transcript features and genomes.
-Depends: R (>= 3.5.1),shiny,ggplot2,rintrojs,dplyr,data.table,fresh,shinyBS,plotly
+Depends: R (>=
+        3.5.1),shiny,ggplot2,rintrojs,dplyr,data.table,fresh,shinyBS,plotly
 Imports: shiny,ggplot2,rintrojs,dplyr,data.table,fresh,shinyBS,plotly
 License: GPL-3 | file LICENSE
 Encoding: UTF-8
@@ -11,3 +13,7 @@ LazyData: true
 RoxygenNote: 7.1.1
 URL: https://github.com/whweve/VisProDom
 BugReports: https://github.com/whweve/VisProDom/issues
+NeedsCompilation: no
+Packaged: 2022-05-17 10:33:43 UTC; Administrator
+Author: Hongwei Wang [aut, cre, cph]
+Maintainer: Hongwei Wang <whweve@163.com>
