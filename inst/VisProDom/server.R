@@ -201,7 +201,7 @@ server <- function(input, output,session) {
   })
   csvfile <- reactive({
     if(input$datasource=="loadgffcheck") {
-      if(length(input$spevariable)) {
+      if(length(input$spevariable) >= 1) {
         dt <- NULL
         for(i in seq(1,length(input$spevariable))) {
           #load(paste0(input$spevariable[i],".rda"))
